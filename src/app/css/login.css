@@ -1,0 +1,204 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    perspective: 800px;
+    -webkit-user-select: none;
+}
+
+input[type="password"],
+input[type="button"],
+input[type="text"],
+button {
+    -webkit-app-region: no-drag;
+}
+
+.shadow {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+#card {
+    width:470px;
+    height:380px;
+    left: 33px;
+    top: 30px;
+    right: 33px;
+    bottom: 30px; 
+    background-color: #ebf2f9;
+    position: absolute;
+    -webkit-transition: -webkit-transform .6s ease-in-out;
+    transition: transform .6s ease-in-out;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    border-radius: 4px;
+    /* -webkit-app-region: drag;  */
+}
+
+#card .front {
+    background: url(../imgs/faHelper.png) no-repeat;
+    background-size: 100% 150px;
+    position: absolute;
+    transform: rotateY(0deg);
+}
+
+
+.sys-control-box {
+    margin-top:5px;
+    float: right;
+    width: 30px;
+    border-radius: 0 4px 0 0;
+}
+
+.sys-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    outline: none;
+    margin: 0;
+}
+
+.sys-btn-mini {
+     background: url(../imgs/btn_mini_normal.png) no-repeat;
+     /* background: url(../imgs/small.png) no-repeat; */
+  
+}
+
+.sys-btn-mini:hover {
+    /* background: url(../imgs/btn_mini_highlight.png) no-repeat; */
+    background: url(../imgs/small3.png) no-repeat;
+} 
+
+.sys-btn-mini:active {
+    background: url(../imgs/btn_mini_down.png) no-repeat;
+}
+
+.sys-btn-close {
+    border-radius: 4px 4px 4px 4px;
+    background: url(../imgs/closenew.png) no-repeat;
+}
+
+/* .sys-btn-close:hover {
+    background: url(../imgs/btn_close_highlight.png) no-repeat;
+} */
+
+/* .sys-btn-close:active {
+    background: url(../imgs/btn_close_down.png) no-repeat;
+} */
+
+.sys-btn-set {
+    background: url(../imgs/btn_set_normal.png) 1px 0 no-repeat;
+}
+
+.sys-btn-set:hover {
+    background: url(../imgs/btn_set_hover.png) 1px 0 no-repeat;
+}
+
+.sys-btn-set:active {
+    background: url(../imgs/btn_set_press.png) 1px 0 no-repeat;
+}
+
+.btn {
+    width: 78px;
+    height: 28px;
+    background: url(../imgs/setting_btn_normal.png) no-repeat;
+    background-size: 100% 100%;
+    border: none;
+    outline: none;
+    margin: 0;
+}
+
+.rem_sub_l{ float:left; font-size:12px; height:33px; line-height:33px;}
+
+.btn:hover,
+.btn:active {
+    background: url(../imgs/setting_btn_hover.png) no-repeat;
+    background-size: 100% 100%;
+}
+
+.btn:focus {
+    background: url(../imgs/setting_btn_hover.png) no-repeat;
+    background-size: 100% 100%;
+}
+
+.loginForm {
+    width:320px;
+    height:auto;
+    left: 135px;
+    top: 160px;
+    background-color: #ebf2f9;
+    position: absolute;
+}
+
+.loginForm .textInput {
+    height: 20px;
+    width: 170px;
+    margin: 10px;
+    padding-right: 50px;
+    padding-left: 5px;
+}
+
+.loginForm .select{
+    height: 30px;
+    width: 230px;
+    vertical-align: top;
+    display: inline-block;
+    border:1px solid #aaaaaa;
+    text-align: center;
+    padding:0 10px;
+}
+
+.loginForm .loginButton {
+    height: 30px;
+    width: 100px;
+    /* margin: 10px; */
+    margin-left: 70px;
+    border:none;
+    color: white;
+    font-size: 14px;
+    /* background-color: #80cbc4; */
+    background:url(../imgs/denglu.png);
+    border-radius:6px 6px 6px 6px;
+    outline:none;
+}
+
+.loginForm .divText {
+    /* height: 35px;
+    width: 230px; */
+    position: relative;
+    display: inline; 
+}
+.loginForm .selectText{
+     /* height: 40px;
+    width: 250px;  */
+    position: relative;
+    display: inline; 
+    margin-left:10px;
+}
+
+.errorInformation {
+    font-size: 12px;
+    color: red;
+    /* float: left; */
+    margin-left: 5px;
+    margin:0px;
+} 
+.contentleft{
+    top:160px;
+    left:30px;
+    height:80%;
+    width:auto;
+    position:absolute;
+}
+.btngn{
+    -webkit-app-region: no-drag;
+    
+}
