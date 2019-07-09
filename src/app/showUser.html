@@ -6,18 +6,17 @@
     <meta charset="UTF-8">
     <title>法官小助手</title>
     <link rel="stylesheet" href="./css/showUser.css" type="text/css">
+    <link rel="stylesheet" href="./css/style.css" type="text/css">
     <script>if(typeof module==='object') {window.module=module;module=undefined;}</script>
     <script type="text/javascript" src="./scripts/jquery.min.js"></script>
 </head>
 <!-- 要使整个窗口可拖拽, 无框窗口是 non-draggable 的-->
 <body onload="getRealTimeTask()">
-<!-- <body style="-webkit-app-region: drag"> -->
     <div id="card">  
         <div id="front" class="front shadow" style="width:100%;height:110px;position:relative;">
             <span style="font-size:15px;color:white;float:left;margin:5px 10px;">法官助手</span>
             <div class="sys-control-box">
-                <!-- <button class="sys-btn sys-btn-minis" title="最小化"></button>
-                <button class="sys-btn sys-btn-big" title="最大化"></button> -->
+                <!-- <button class="sys-btn sys-btn-minis" title="最小化"></button>-->
                 <button class="sys-btn sys-btn-setting" title="设置"></button>
                 <button class="sys-btn sys-btn-closed" title="关闭"></button>
             </div>
@@ -25,7 +24,6 @@
             	<div style="width:100%;height:100%;margin-top:-15px;">
             		 <ul style="width:100%;height:70px;list-style: none;margin-left:-30px;color:white;">
                          <li style="width:70px;height:70px;float:left">
-                    
                           <img id="BigIcon" src="imgs/Image.png" title="头像" style="width:70px;height: auto;"/>
                          </li>
                           <li style="width:80%;height:70px;float:left;margin-left:-40px;font-size:15px;">
@@ -43,7 +41,7 @@
                                         <li><label id="yhsf" style="width:auto;font-size:14px;margin-left:20px"></label></li>
                                     </ul>
                                    </li>
-                                    <li style="padding:5px 0px;font-size:14px;font-style: italic;text-align: center;"><lable  id="grby">天地之间有杆秤</lable></li>
+                                    <li style="padding:5px 0px;font-size:14px;font-style: italic;text-align: center;margin-left:5px;"><lable  id="grby">天地之间有杆秤</lable></li>
                                  <li>
                                     <ul style="height:20px;">
                                         <li><img id="tubiao" src="imgs/tubiaonew.png" style="float:left;"></li>
@@ -58,59 +56,100 @@
             </div>
         </div>
         <div class="search">
-           <input class="searchbox" type="text" name="searchbox" placeholder="搜索：案件、事务、审批" style="width:270px;height:25px;padding:2px 4px;border:none;background-color: rgba(232, 229, 229, 0.15);outline-color: gainsboro;">
-           <img src="imgs/Shape.png" style="float:right;width:18px;;max-height:26px;padding:7px 2px;">
+            <!-- placeholder="搜索：案件、事务、审批"-->
+           <input class="searchbox" type="text" name="searchbox"  style="width:292px;height:25px;padding:2px 4px;border:none;background-color: rgba(232, 229, 229, 0.15);outline-color: gainsboro;" readonly="readonly">
+         <!--<img src="imgs/Shape.png" style="float:right;width:18px;;max-height:26px;padding:7px 2px;">-->
         </div>
-        <div class="title">
-            <div class="block" id="ajblock" style="background-color: white;color:#1e74c2;">
-                <img id="anjian" src="imgs/banjiann.png" class="imgs">
-                <label class="smalltitle">案件</label>
-            </div>
-            <div class="block" id="swblock">
-                <img id="shiwu"  src="imgs/shiwun.png" class="imgs">
-                <label class="smalltitle">事务</label>
-            </div>
-            <div class="block" id="sxblock">
-                <img id="shenpi" src="imgs/shenpin.png" class="imgs">
-                <label class="smalltitle">审核</label>
-            </div>
+        <div id="navl" class="navl">
+            <ul style="margin-left: -30px;">
+                <li class="navmenu" style="border-right:1px solid rgba(120, 132, 147, 0.44)">
+                    <a href="#" rel="external nofollow">
+                        <div class="block" id="ajblock">
+                            <img id="anjian" src="imgs/banjiann.png" class="imgs">
+                            <label class="smalltitle">案件</label>
+                        </div>
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="javascript:void(0)" onclick="getLctx()">审批提醒</a> 
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" onclick="getSxtxClick()">审限提醒</a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" onclick="getKxtx()">开庭提醒</a> 
+						</li>  
+                    </ul>
+                </li>
+                <li class="navmenu" style="border-right:1px solid rgba(120, 132, 147, 0.44)">
+                    <a href="#" rel="external nofollow"> 
+                        <div class="block" id="swblock">
+                           <img id="shiwu"  src="imgs/bshiwun.png" class="imgs">
+                           <label class="smalltitle">事务</label>
+                        </div>
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="javascript:void(0)" onclick="getSwZZ()">事务提醒</a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" onclick="getBWL()">备忘录提醒</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="navmenu">
+                    <a href="#" rel="external nofollow"> 
+                        <div class="block" id="sxblock">
+                           <img id="shenpi" src="imgs/bshenpin.png" class="imgs">
+                           <label class="smalltitle">审核</label>
+                        </div>
+                    </a>
+                </li>
+            </ul>
         </div>
         <div class="mainContent" style="display: block;" id="mainContent1">
             <nav style="margin-top: -5px">
                 <ul class="level" style="margin-left: -25px;">
-                    <li>
+                    <li style="display:none;">
                          <a href="javascript:void(0)" onclick="getLctx()" id="dch">
                               <img src="imgs/toUp.png" style="width:auto;height:auto;" id="img1">
                               <label id="splabel">审批提醒</label></a> 
                          <ul class="content" id="ajtx">
                         </ul>
                     </li>
-                    <li>
-                        <a href="javascript:void(0)" onclick="getSxtx()" id="sxt">
-                                <img src="imgs/toUp.png" style="width:auto;height:auto;" id="img2">
-                                <label id="sxlabel">审限提醒</label></a>
-                        <ul class="content" id="sxtx"> 
+                    <li style="display:none;">
+                        <a href="javascript:void(0)" onclick="getSxtxClick()" id="sxt">
+                                <!--<img src="imgs/toUp.png" style="width:auto;height:auto;" id="img2">
+                                <label id="sxlabel">审限提醒</label>--></a>
+                        <ul class="content" id="sxtx" style="margin-left:-25px;"> 
                         </ul>
                     </li>
-                    <li>
+                    <li  style="display:none;">
                         <a href="javascript:void(0)" onclick="getKxtx()" id="kxt">
                                 <img src="imgs/toUp.png" style="width:auto;height:auto;" id="img3">
                                 <label id="kxlabel">开庭提醒</label></a>
                         <ul class="content" id="kxtx"> 
                         </ul>
                     </li>
+                    <li style="display:none;">
+                         <a href="javascript:void(0)" onclick="getSwZZ()" id="swtxzz" >
+                              <img src="imgs/toUp.png" style="width:auto;height:auto;" id="img6">
+                              <label id="swzzlabel">事务提醒</label></a> 
+                         <ul class="content" id="zzswtx">
+                        </ul>
+                    </li>
+                    <li style="display:none;">
+                         <a href="javascript:void(0)" onclick="getBWL()" id="BWLtx">
+                              <img src="imgs/toUp.png" style="width:auto;height:auto;" id="img7">
+                              <label id="Bwllabel">备忘录提醒</label></a> 
+                         <ul class="content" id="BWLswtx">
+                        </ul>
+                    </li>
                 </ul>
             </nav>
-            <!-- <div class="contentHeader">
-                <label>案件提醒</label>
-            </div>
-               <div class="content" style="width:90%;height:200px;display:inline-block">
-                <ul style="font-size:14px;">
-                </ul>
-               </div> -->
         </div>
-    <!--事务提醒&自增提醒--!>
-        <div class="mainContent" style="display: none;" id="mainContent2">
+    <!--事务提醒&自增提醒-->
+        <!--<div class="mainContent" style="display: none;" id="mainContent2">
             <nav style="margin-top: -5px">
                 <ul class="level" style="margin-left: -25px;">
                     <li>
@@ -129,7 +168,7 @@
                     </li>
                 </ul>
             </nav>
-        </div>
+        </div>-->
         <div class="mainContent" style="display: none;" id="mainContent3">
         </div>
         <div class="contnetbottom">
@@ -139,6 +178,9 @@
                     </li>
                     <li class="history">
                     <img src="imgs/histy.png" id="new2" title="查看历史">
+                    </li>
+                    <li class="teamCommunity">
+                    <img src="imgs/group.png" id="new3" title="团队协作" style="width:22px;height:22px;margin-top:1px;">
                      </li>
                 </ul>
         </div>
@@ -162,7 +204,7 @@
        <script type="text/javascript" src="./scripts/userEditor.js"></script>
        <script type="text/javascript">
     
-    </script>
+      </script>
      <script>if(window.module) module=window.modules;</script>
 </body>
 

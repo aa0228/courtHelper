@@ -151,8 +151,8 @@ body {
 
 .mainContent {
 width: 98%;
-min-height:170px; 
-max-height:174px; 
+min-height:174px; 
+max-height:175px; 
 overflow-y: auto;
 border-bottom: 1px solid lightgray;
 /* position:relative; */

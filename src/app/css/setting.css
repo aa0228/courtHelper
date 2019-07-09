@@ -7,22 +7,44 @@ body {
 }
 body {
     perspective: 800px;
-    background-color: #ebf2f9;
     -webkit-user-select: none;
+}
+#card{
+    background-color: #ffffff;
+    position:absolute;
+    border-radius: 10px;
+    width:600px;
+    top:10px;
+    left:10px;
+    right:10px;
+    bottom:10px;
+    height:480px;
+    box-shadow: 0 0 10px rgba(0,0,0,1);
 }
 
 .top{
-	height:30px;
-	background:cornflowerblue;
-    background-size: 100% 50px;
+	height:38px;
+	background-color:#1e74c2;
     position: relative;
     transform: rotateY(0deg);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+#setspan{
+    font-size:18px;
+    font-family: "黑体";
+    color:white;
+    float:left;
+    margin:5px;
+    font-weight: 800;
+    margin-left:10px;
 }
 .sys-control-box {
     margin-top:5px;
     float: right;
     width: 28px;
     border-radius: 0 4px 0 0;
+    margin-right:9px;
 }
 .sys-btn {
     width: 24px;
@@ -32,8 +54,8 @@ body {
     margin: 0;
 }
 .set-btn-closed {
-    border-radius: 0 4px 0 0;
-    background: url(../imgs/closew.png) no-repeat;
+    background: url(../imgs/icon-close.png) no-repeat;
+    background-size: 100% 100%;
 }
 #sctx{
     width:100px;
@@ -42,3 +64,81 @@ body {
 .btnd{
     -webkit-app-region:no-drag;
 } 
+.lsd{
+    float:left;
+    margin-left:2px;
+    margin-right:8px;
+    font-family: "微软雅黑";
+    font-style: normal;
+    font-weight: 300;
+    font-size: 12px;
+}
+input[type="checkbox"]{
+    float: left;
+}
+.spantext{
+ height:45px;
+ padding:8px 10px;
+ width:110px;
+ color:black;
+ font-size:17px;
+ font-family: "黑体";
+}
+.active{
+    background-color: #ffffff;
+}
+.newlabel{
+    width:140px;
+    float:left;
+    font-size:17px;
+    text-align: right;
+    margin-top:10px;
+}
+
+.operation {
+    margin: 10px;
+  }
+.operation>button {
+    margin: 10px;
+}
+#books_length {
+    float: left;
+    margin-left: 20px;
+}
+#books_filter {
+    float: right;
+    margin-right: 20px;
+}
+#books {
+ margin: 5px;
+}
+.center-block {
+   display: block;
+   width: 21%;
+   margin: auto;
+}
+.newll-edit:before{
+	content: "";
+	display: block;
+	width:12px;
+	height:12px;
+	background: url(../imgs/edit1.png);
+	background-size: 100%;
+}
+.newll-plus:before{
+	content: "";
+	display: block;
+	width:15px;
+	height:15px;
+	background: url(../imgs/addhao.png);
+	background-size: 100%;
+}
+.newll-remove:before{
+	content: "";
+	display: block;
+	width:14px;
+	height:14px;
+	background: url(../imgs/delete1.png);
+	background-size: 100%;
+}
+

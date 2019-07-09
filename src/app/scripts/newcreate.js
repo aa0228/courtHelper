@@ -18,6 +18,31 @@ $('#btxr').select2({
     multiple:true,
 //    maximumSelectionLength: 3  //最多能够选择的个数
 });
+$(':radio').click(function(){
+var xzs=$(this).val();
+if(xzs==0){
+    $("#jssj").css("display","block");
+    $("#sc").css("display","none");
+}else{
+    $("#jssj").css("display","none");
+    $("#sc").css("display","block");
+}
+});
+toastr.options = {  
+    closeButton: true,  //是否显示关闭按钮
+    debug: false,  //是否为调试
+    progressBar: true,  //是否显示进度条（设置关闭的超市时间进度条）
+    positionClass: "toast-center-center",  //消息框在页面显示的位置
+    onclick: null,  
+    showDuration: "200",  
+    hideDuration: "1000",  
+    timeOut: "2000",  //自动关闭超时时间 
+    extendedTimeOut: "1000",  
+    showEasing: "swing",  
+    hideEasing: "linear",  
+    showMethod: "fadeIn",  //“fadeIn” 显示的方式，和jquery相同 
+    hideMethod: "fadeOut",// “fadeOut” 隐藏的方式，和jquery相同
+}; 
 ipc.on('newData', function (event, message) {
     console.log(message);
     // let user = JSON.parse(message);
@@ -36,10 +61,32 @@ $('#fybm').change(function () {
     $('#btxr').empty();
     selectInit(localUrl+'/showBmry?fydm='+fydm+'&clbm='+$('#fybm').find("option:selected").text(),'#btxr');
 });
+$(".returnback").click(function(){
+    $('#registerDateBegin').val("");
+    $('#registerDateEnd').val("");
+    $('#DateEndsc').val("");
+    $('.btnd option:selected').val("");
+    $('#ssjnr').val("");
+    $('#bz').val("");
+    $("#fybm").val(null).trigger("change");
+})
 
 $(".save").click(function(){
     var datestart=$('#registerDateBegin').val();
-    var dateend=$('#registerDateEnd').val();
+    var dateend="";
+    if($('#registerDateEnd').val()!=""&$('#registerDateEnd').val()!=null){
+      dateend=$('#registerDateEnd').val();
+    }else{
+     var sdtime="";
+     var ssd=$('#DateEndsc').val();
+     var dates=convertDateFromString(datestart).getTime()+parseInt(ssd)*60*1000;
+     var date=new Date();
+     date.setTime(dates);
+     sdtime+=date.getFullYear()+"-"+getMonth(date)+"-"+getDay(date)+" "+getHours(date)+":"+getMinus(date)+":"+getSeconds(date);
+     dateend=sdtime;
+     console.log(dateend);
+    }
+
     var lx=$('.btnd option:selected').val();
     var ssjnr=$('#ssjnr').val();
     var bz=$('#bz').val();
@@ -49,10 +96,10 @@ $(".save").click(function(){
       $('#registerDateBegin').focus();
       return;
     }
-    if(dateend==""){
-      $('#registerDateEnd').focus();
-      return;
-    }
+    // if(dateend==""){
+    //   $('#registerDateEnd').focus();
+    //   return;
+    // }
     if(ssjnr==""){
         $('#ssjnr').focus();
         return;
@@ -61,7 +108,10 @@ $(".save").click(function(){
         $('#btxr').focus();
         return;
     }
-   
+    var userdata={
+        "fydm": fydm, 
+        "yhdm": yhdm, 
+      };
     //实体类名必须和实体属性名相同，newdata是json对象
     var newdata={
         "fydm":fydm,
@@ -81,10 +131,12 @@ $(".save").click(function(){
       data:JSON.stringify(newdata),
       processData : false,//是否序列化
       success:function (msg) {
-         alert("新增成功！");
-         ipc.send('close-new-window');
+         toastr.success("新增成功！");
+         ipc.send('get-new-window');
+         ipc.send('tx-clock',userData);
       },
       error : function(jqXHR, textStatus, errorThrown) {
+        toastr.error("新增失败！");
       }
     });
 });
@@ -99,6 +151,58 @@ $.fn.datetimepicker.dates['zh-CN'] = {
     suffix: [],
     meridiem: ["上午", "下午"]
 };
+function convertDateFromString(dateString){
+    if(dateString){
+        var arr1=dateString.split(" ");
+        var sdate=arr1[0].split("-");
+        var ydate=arr1[1].split(":");
+        var date=new Date(sdate[0],sdate[1]-1,sdate[2],ydate[0],ydate[1],ydate[2])
+        return date;
+    }else{
+        toastr.warning("时间输入格式错误!");
+    }
+}
+
+function getMonth(date){
+  var month="";
+  month=date.getMonth()+1;
+  if(month<10){
+    month="0"+month;
+   }
+ return month;
+}
+function getDay(date){
+  var day="";
+  day=date.getDate();
+  if(day<10){
+      day="0"+day;
+  }
+  return day;
+}
+function getHours(date){
+  var hours="";
+  hours=date.getHours();
+  if(hours<10){
+      hours="0"+hours;
+  }
+  return hours;
+}
+function getMinus(date){
+   var minutes="";
+   minutes=date.getMinutes();
+   if(minutes<10){
+    minutes="0"+minutes; 
+   }
+   return minutes;
+}
+function getSeconds(date){
+    var seconds="";
+    seconds=date.getSeconds();
+    if(seconds<10){
+        seconds="0"+seconds; 
+    }
+    return seconds;
+}
 function setDataTimePicker(nodeId) {
     $(nodeId).datetimepicker({
       language:  'zh-CN',
@@ -118,7 +222,7 @@ function setDataTimePicker(nodeId) {
       showclear:true,
     });
   }
-  function selectInit(url,id) {
+function selectInit(url,id) {
     $.ajax({
         type:"post",
         url:encodeURI(url),
@@ -127,7 +231,7 @@ function setDataTimePicker(nodeId) {
         success:function (msg) {
             $(id).empty();
             // console.log(msg)
-            $(id).append("<option value=\"\">不限</option>");
+            $(id).append("<option value=\"\">请选择</option>");
             for (var i = 0; i < msg.length; i++) {
                 $(id).append("<option  value=" + msg[i] + ">" + msg[i] + "</option>");
             }

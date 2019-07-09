@@ -7,15 +7,18 @@ const path = require('path');
 const ipc = electron.ipcMain;//主进程中的通信，在主进程中使用，用来处理渲染进程（网页）发送同步和异步的信息
 
 
-
 let mainWindow = null;
 let userEditorWindow = null;
 let settingWindow = null;
 let newCreateWindow=null;
+let teamworkWindow=null;
 let trayIcon =null;
 let appTray =null;
 let txWindow=null;
-
+let screenx=0;
+let screeny=0;
+let timer = null;
+let specificTaskWindow=null;
 
 // const WinReg=require('winreg');
 
@@ -68,13 +71,17 @@ function createWindow() {
 		height: 500,
 		transparent: true,
 		frame: false,
-		// resizable: false,
+		resizable: true,
 		maximizable: false,
 		title:"法官提醒助手",
 		skipTaskbar:false,
 		alwaysOnTop:true,
 	});
 
+	var electronScreen=electron.screen;
+	var size=electronScreen.getPrimaryDisplay().workAreaSize;
+	screenx=size.width;
+	screeny=size.height;
 	//加载页面之加载本地文件
 	const URL = url.format({
 		pathname: path.join(__dirname, 'app/index.html'),
@@ -84,7 +91,7 @@ function createWindow() {
 
 	mainWindow.loadURL(URL);//装载hh登录页面
 
-	//mainWindow.webContents.openDevTools();
+//	mainWindow.webContents.openDevTools();
 	
     //回收BrowserWindow对象  
 	mainWindow.on('closed', () => {
@@ -159,21 +166,24 @@ ipc.on('open-user-editor', (event,message) => {
 	if (userEditorWindow) {
 		return;
 	}
+	var swidth=screenx-345;
+	var sheight=screeny+100;
 	//创建用户编辑窗口
 	userEditorWindow = new BrowserWindow({
 		frame: false,//去掉边框
-		height:900,
-		maxheight: 1200,
+		height:sheight,//900
+		maxHeight: 1200,
 		resizable:true,
-		width: 315,//500
+		width: 380,//320
 		maximizable:true,
-		minWidth:315,
-		maxWidth:1200,//400
-		minheight:800,
+		minimizable:true,
+		minWidth:380,
+		// maxWidth:380,
+		minHeight:700,
 		transparent: true,
-		x:820,
-		y:10,
-		maxwidth:600,//500
+		x:swidth,
+		y:2,
+		maxWidth:1200,//500
 		skipTaskbar:true,//是否在任务栏中显示
 	});
 	const user_edit_url = url.format({
@@ -184,7 +194,6 @@ ipc.on('open-user-editor', (event,message) => {
 
 	userEditorWindow.loadURL(user_edit_url);
    
-	//userEditorWindow.loadURL('http://localhost:3000');//网络路径加载
 
 	trayIcon = path.join(__dirname, 'app/imgs');//app是选取的目录 	
     appTray = new Tray(path.join(trayIcon, 'Court128.ico'));
@@ -206,6 +215,11 @@ ipc.on('open-user-editor', (event,message) => {
 			}
 			if(appTray){
 				appTray.destroy();
+			}if(teamworkWindow){
+				teamworkWindow.destroy();
+			}
+			if(specificTaskWindow){
+				specificTaskWindow.destroy();
 			}
 			mainWindow.show();
 		} 
@@ -235,7 +249,7 @@ ipc.on('open-user-editor', (event,message) => {
   ]);
     appTray.setToolTip('法官助手');//设置此托盘图标的悬停提示内容
 	appTray.setContextMenu(contextMenu);//系统托盘程序右键菜单
-    userEditorWindow.webContents.openDevTools();//打开开发工具界面
+  //  userEditorWindow.webContents.openDevTools();//打开开发工具界面
 
 	if(message!=undefined){
 		userEditorWindow.webContents.on('did-finish-load', function () {
@@ -252,22 +266,22 @@ ipc.on('open-user-editor', (event,message) => {
 
 	//系统托盘图标闪烁 (设置了定时)
 function showclick(){
-	var count = 0,timer = null;
+	var count = 0;
 	timer=setInterval(function() {
 		count++;
 		if (count%2 == 0) {
-			appTray.setImage(path.join(trayIcon, 'Court128.ico'))
+			appTray.setImage(path.join(trayIcon, 'Court128.ico'));
 		} else {
-			appTray.setImage(path.join(trayIcon, 'empty.ico'))
+			appTray.setImage(path.join(trayIcon, 'empty.ico'));
 		}
 	}, 600);
 	
 	//   单点击 1.主窗口显示隐藏切换 2.清除闪烁
 	appTray.on("click", function(){
 		if(!!timer){
-			appTray.setImage(path.join(trayIcon, 'Court128.ico'))
+			appTray.setImage(path.join(trayIcon, 'Court128.ico'));
 			//主窗口显示隐藏切换
-			clearInterval(timer);
+			// clearInterval(timer);
 			if(txWindow){
 				txWindow.show();
 			}
@@ -283,16 +297,17 @@ ipc.on('tx-clock',(event,message)=>{
 	if(txWindow){
 		txWindow.show();
 	}else{
+		var swidth=screenx-595;
+		var sheight=screeny-265;
 		txWindow=new BrowserWindow({
 			frame: false,//去掉边框
-			height:216,
+			height:265,
 			resizable:false,
-			width: 420,//500
+			width: 260,//260
 			maximizable:true,
-			minWidth:350,
 			transparent: true,//
-			x:750,
-			y:500,
+			x:swidth,
+			y:sheight,
 			maxwidth:500,//500
 			title:'提醒消息',
 			skipTaskbar:false,//是否在任务栏中显示
@@ -300,7 +315,8 @@ ipc.on('tx-clock',(event,message)=>{
 			icon:'./app/imgs/CourtIco.ico',
 		});
 		const tx_edit_url = url.format({
-			pathname: path.join(__dirname, 'app/txsl.html'),
+			// pathname: path.join(__dirname, 'app/txsl.html'),
+			pathname: path.join(__dirname, 'app/ntxtk.html'),
 			protocol: 'file',
 			slashes: true
 		});
@@ -313,8 +329,8 @@ ipc.on('tx-clock',(event,message)=>{
 		txWindow.on('closed', () => {
 			txWindow = null;
 		});
-	//	txWindow.webContents.openDevTools();
-		txWindow.hide();
+//		txWindow.webContents.openDevTools();
+//		txWindow.hide();
 		showclick();
 	}
 });
@@ -323,16 +339,16 @@ ipc.on('tx-clock',(event,message)=>{
 ipc.on('look-set',(event,message)=>{
 	settingWindow = new BrowserWindow({
 		frame: false,//去掉边框
-		height:612,
-		minheight:610,
+		height:500,//480
+		minHeight:610,
 		resizable:true,
-		width: 360,//500
+		width: 660,//600
 		maximizable:true,
-		minWidth:350,
+		minWidth:440,
 		transparent: true,//
 		x:300,
 		y:100,
-		maxwidth:500,//500
+		maxWidth:1200,//500
 		skipTaskbar:false,//是否在任务栏中显示
 		title:"设置",
 	});
@@ -351,20 +367,18 @@ ipc.on('look-set',(event,message)=>{
 	settingWindow.on('closed', () => {
 		settingWindow = null;
 	});
-	settingWindow.webContents.openDevTools();
+//	settingWindow.webContents.openDevTools();
 });
 ipc.on('new-record',(event,message)=>{
 	newCreateWindow = new BrowserWindow({
 		frame: false,//去掉边框
-		height:540,
+		height:539,
 		resizable:true,
-		width: 540,//500
+		width: 541,//500
 		maximizable:true,
-		minWidth:530,
-		transparent: true,//
+		transparent: true,
 		x:50,
 		y:50,
-		maxwidth:600,//500
 		skipTaskbar:false,//是否在任务栏中显示
 		title:"创建提醒",
 	});
@@ -381,8 +395,71 @@ ipc.on('new-record',(event,message)=>{
 	}
 	newCreateWindow.on('closed', () => {
 		newCreateWindow = null;
+	});	
+//	newCreateWindow.webContents.openDevTools();
+});
+
+ipc.on('teamwork',(event,message)=>{
+	teamworkWindow =new BrowserWindow({
+		frame: false,//去掉边框
+		height:690,
+		resizable:true,
+		width: 550,
+		maximizable:true,
+		transparent: true,
+		x:100,
+		y:30,
+		skipTaskbar:false,//是否在任务栏中显示
+		title:"团队协作",
 	});
-	newCreateWindow.webContents.openDevTools();
+	const user_new_url = url.format({
+		pathname: path.join(__dirname, 'app/teamwork.html'),
+		protocol: 'file',
+		slashes: true
+	});
+	teamworkWindow.loadURL(user_new_url);
+	if(message!=undefined){
+		teamworkWindow.webContents.on('did-finish-load', function () {
+			teamworkWindow.webContents.send('teamworkData', message);
+		});
+	}
+	teamworkWindow.on('closed', () => {
+		teamworkWindow = null;
+	});	
+//	teamworkWindow.webContents.openDevTools();
+});
+
+
+ipc.on('specificTask',(event,message)=>{
+	specificTaskWindow =new BrowserWindow({
+		frame: false,//去掉边框
+		height:600,
+		maxHeight:750,
+		resizable:true,
+		width: 940,
+		maxWidth:1200,
+		maximizable:true,
+		transparent: true,
+		x:70,
+		y:30,
+		skipTaskbar:false,//是否在任务栏中显示
+		title:"任务内容",
+	});
+	const user_new_url = url.format({
+		pathname: path.join(__dirname, 'app/specificTask.html'),
+		protocol: 'file',
+		slashes: true
+	});
+	specificTaskWindow.loadURL(user_new_url);
+	if(message!=undefined){
+		specificTaskWindow.webContents.on('did-finish-load', function () {
+			specificTaskWindow.webContents.send('specificTaskData', message);
+		});
+	}
+	specificTaskWindow.on('closed', () => {
+		specificTaskWindow = null;
+	});	
+	specificTaskWindow.webContents.openDevTools();
 });
 
 //接收最小化通信
@@ -401,8 +478,17 @@ ipc.on('turn-big-user-editor', () => {
 ipc.on('close-tx-window',()=>{
 	if (txWindow) {
 		txWindow.destroy();
+		appTray.setImage(path.join(trayIcon, 'Court128.ico'));
+		clearInterval(timer);
 	}
 });
+
+ipc.on('closespecificTask',()=>{
+	specificTaskWindow.destroy();
+});
+ipc.on('closeteamTask',()=>{
+	teamworkWindow.destroy();
+})
 ipc.on('hide-tx-window',()=>{
 	txWindow.hide();
 });
@@ -424,6 +510,11 @@ ipc.on('close-set-window', () => {
 		settingWindow.destroy();
 	}
 });
+ipc.on('close-new-window',()=>{
+	if (newCreateWindow) {
+		newCreateWindow.destroy();
+	}
+})
 //信息修改后的重新显示
 ipc.on('update-set-window',()=>{
 	if (userEditorWindow) {
@@ -444,16 +535,54 @@ ipc.on('update-set-window',()=>{
 	mainWindow.show();
 });
 
-ipc.on('close-new-window', () => {
+ipc.on('get-new-window', () => {
+	if (txWindow) {
+		txWindow.destroy();
+	}
 	if (newCreateWindow) {
 		newCreateWindow.destroy();
 	}
+    
 });
 
-//接收到消息后执行的程序，news是自定义命令，只要与页面发送过来的命令一致
-// ipc.on('news',function(event, message){
-//   alert(message);
-// })
+
+ipc.on('open-main-windows-1',()=>{
+	var message=2;
+	if(userEditorWindow.isVisible()==false){
+		userEditorWindow.show();
+	}
+	userEditorWindow.webContents.send('open-cx-1',message);
+});
+ipc.on('open-main-windows-2',()=>{
+	var message=2;
+	if(userEditorWindow.isVisible()==false){
+		userEditorWindow.show();
+	}
+	userEditorWindow.webContents.send('open-cx-2',message);
+});
+ipc.on('open-main-windows-3',()=>{
+	var message=2;
+	if(userEditorWindow.isVisible()==false){
+		userEditorWindow.show();
+	}
+    userEditorWindow.webContents.send('open-cx-3',message);
+
+});
+ipc.on('open-main-windows-4',()=>{
+	var message=2;
+	if(userEditorWindow.isVisible()==false){
+		userEditorWindow.show();
+	}
+	userEditorWindow.webContents.send('open-cx-4',message);
+
+});
+ipc.on('open-main-windows-5',()=>{
+	var message=2;
+	if(userEditorWindow.isVisible()==false){
+		userEditorWindow.show();
+	}
+	userEditorWindow.webContents.send('open-cx-5',message);
+});
 
 
 app.on('ready', createWindow);
@@ -468,26 +597,4 @@ app.on('activate', () => {
 	if (mainWindow == null) {
 		createWindow();
 	}
-
 });
-
-//设置菜单
-let dockMenu = Menu.buildFromTemplate([
-    {
-		label: '文件',
-		 click: function () {
-            console.log('点击事件');
-        }
-    },
-    {
-		label: '编辑',
-		 submenu: [
-            {label: '保存'},
-            {label: '另存'}
-        ]
-    },
-    {label: '帮助'}
-]);
-Menu.setApplicationMenu(dockMenu);
-
-

@@ -40,7 +40,6 @@ button {
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
     border-radius: 4px;
-    /* -webkit-app-region: drag;  */
 }
 
 #card .front {
@@ -140,7 +139,7 @@ button {
 
 .loginForm .textInput {
     height: 20px;
-    width: 170px;
+    width: 160px;
     margin: 10px;
     padding-right: 50px;
     padding-left: 5px;
@@ -148,7 +147,7 @@ button {
 
 .loginForm .select{
     height: 30px;
-    width: 230px;
+    width: 220px;
     vertical-align: top;
     display: inline-block;
     border:1px solid #aaaaaa;

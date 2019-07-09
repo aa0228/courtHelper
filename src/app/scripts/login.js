@@ -5,7 +5,7 @@ const session=require('electron').remote.session;
 const url = require('url');
 const path = require('path');
 const fs = require("fs");
-
+var localUrl='http://130.1.67.23:8088';
 // $(document).ready(function(){
 //     if(getCookies('password')!=null&&getCookies('password')!=''){
 //         $("#save_me").attr("checked",true);
@@ -62,7 +62,7 @@ $(".loginForm .loginButton").click(function () {
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: "http://localhost:8088/loginIn",
+        url:encodeURI(localUrl+'/loginIn'),
         data: {fydm: fydm, username: username, password: password },
         error: function () {
             console.info("当前访问的是本地文件登录");
@@ -83,51 +83,21 @@ $(".loginForm .loginButton").click(function () {
                 }
             }
             else {
-                $(".pasError").show();
-                $(".pasError").text(res.msg);
+                $("#pasError").show();
+                $("#pasError").text(res.msg);
                 // $(".errorInformation").text("用户名或密码错误!");
             }
         }
     });
 });
 
-// function readFilePath(username, password) {
-
-//     var loginFlag = false;
-//     const newFile_path = path.join(__dirname, 'data/user.json').replace(/\\/g, "\/");
-
-//     fs.exists(newFile_path, function (exists) {
-//         console.log(exists ? "文件存在" : "文件不存在");
-//         if (!exists) {
-//             $(".errorInformation").show();
-//             $(".errorInformation").text("查找失败，本地文件不存在!");
-//             return;
-//         } else {
-//             let result = JSON.parse(fs.readFileSync(newFile_path));
-//             for (var i in result) {
-//                 if ((result[i].lid == username) && (result[i].password == password)) {
-//                     let data = JSON.stringify(result[i]);
-//                     setCookie('name',username);
-//                     setCookie('password',password);
-//                     ipc.send('open-user-editor', data);
-//                     loginFlag = true;
-//                     break;
-//                 }
-//             }
-//             if (!loginFlag) {
-//                 $(".errorInformation").show();
-//                 $(".errorInformation").text("用户名或密码错误!");
-//             }
-//         }
-//     });
-// }
 //  保存cookie
 let setCookie=(name,value)=>{
     let Days=365;
     let exp=new Date();
     let date=Math.round(exp.getTime()/1000)+Days*24*60*60;
     const cookie={
-        url:"http://localhost:8088/loginIn",
+        url:encodeURI(localUrl+'/loginIn'),
         name:name,
         value:value,
         expirationDate:date
@@ -140,7 +110,7 @@ let setCookie=(name,value)=>{
 // 清除缓存
 let clearCookies = () => {
     session.defaultSession.clearStorageData({
-      origin: "http://localhost:8088/loginIn",//替换掉登录地址
+      origin:localUrl+'/loginIn',//替换掉登录地址
       storages: ['cookies']
     }, function (error) {
       if (error) console.error(error);
@@ -149,7 +119,7 @@ let clearCookies = () => {
 //获取cookie
 
 let getCookies = (name) => {
-    session.defaultSession.cookies.get({ url: "http://localhost:8088/loginIn" }, function (error, cookies) {
+    session.defaultSession.cookies.get({ url: "http://130.1.67.23:8088/loginIn" }, function (error, cookies) {
       console.log(cookies);
       for(var i=0;i<cookies.length;i++){
           if(name==cookies[i].name) return cookies[i].value;

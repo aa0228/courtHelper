@@ -8,13 +8,22 @@ const newFile_path = path.join(__dirname, 'data/user.json').replace(/\\/g, "\/")
 
 
 var localUrl='http://130.1.67.23:8088';
-var getTxs="08:30";
+var getTxs="08:30:00";
 var userData=null;
+var sxtx=0;
+var sxtxvalue=new Array();
+var ysxtxvalue=new Array();
+var urls=new Array(5);
+urls[0]="/sxtxCsx";
+urls[1]="/sxtxOne";
+urls[2]="/sxtxThree";
+urls[3]="/sxtxSeven";
+urls[4]="/sxtxKchf";
 //获取个性设置，图片、昵称
 function getGXSZ(){
 var yhdm = $("#yhdm").val();
 var fydm = $("#fydm").val();
- $.ajax({
+$.ajax({
      type:"post",
      dataType:"json",
      url:encodeURI(localUrl+'/getPersonInfo'),
@@ -36,6 +45,38 @@ var fydm = $("#fydm").val();
             if(userData.txsj!=null&userData.txsj!=''){
                 getTxs=userData.txsj;
             }
+            if(userData.sxtxlb!=null&userData.sxtxlb!=''){
+               sxtxvalue=userData.sxtxlb.split(",");
+               console.log(sxtxvalue);
+               for(var i=0;i<sxtxvalue.length;i++){
+                   if(sxtxvalue[i]==0){
+                    ysxtxvalue[i]="超审限";
+                   }
+                   if(sxtxvalue[i]==1){
+                    ysxtxvalue[i]="0天审限";
+                   }
+                   if(sxtxvalue[i]==2){
+                    ysxtxvalue[i]="3天审限";
+                   }
+                   if(sxtxvalue[i]==3){
+                    ysxtxvalue[i]="7天审限";
+                   }
+                   if(sxtxvalue[i]==4){
+                    ysxtxvalue[i]="扣除恢复";
+                   }
+               }
+            }else{
+            sxtxvalue[0]=1;
+            ysxtxvalue[0]="超审限";
+            sxtxvalue[1]=1;
+            ysxtxvalue[1]="0天审限";
+            sxtxvalue[2]=2;
+            ysxtxvalue[2]="3天审限";
+            sxtxvalue[3]=3;
+            ysxtxvalue[3]="7天审限";
+            sxtxvalue[4]=4;
+            ysxtxvalue[4]="扣除恢复";
+            }
         }
         else {
         }
@@ -50,9 +91,18 @@ var fydm = $("#fydm").val();
 $(".sys-control-box .sys-btn-minis").click(function () {
     ipc.send('mini-user-editor-window');
 });
-
-var localUrl='http://130.1.67.23:8088';
+$(".navmenu").mouseover(function(){
+    $(this).children("ul").show(); 
+});   
+$(".navmenu").mouseout(function(){  
+    $(this).children("ul").hide();
+});
 function getLctx(){
+    $("#dch").parent("li").show(); 
+    $("#sxt").parent("li").hide(); 
+    $("#kxt").parent("li").hide(); 
+    $("#BWLtx").parent("li").hide();
+    $("#swtxzz").parent("li").hide();
    var yhdm = $("#yhdm").val();
    var fydm = $("#fydm").val();
    $.ajax({
@@ -65,23 +115,19 @@ function getLctx(){
   },
    success: function (successData) {
        //$("#ajtx").css("display","block");
-       console.info(successData);
-       var $ul = $("#dch").next('ul');
-       if($ul.is(':visible')){
-           $("#splabel").text("审批提醒 ["+successData.length+"]");
-           $("#img1").attr("src","imgs/toUp.png");
-           $ul.slideUp();
+           var $ul = $("#dch").next('ul');
+           if($ul.is(':visible')){
            }else{
-               var htmlStr="";
+           var htmlStr="";
            for(var i=0;i<successData.length;i++){
-               var htmlString="<li>【"+successData[i].txlb+"】 "+successData[i].ah+"<div style=\"display:none;width:100%;height:55px;float:left;font-size:13px;color:#607D8B\">*申请日期："+successData[i].sqrq+"</div></li>";
-               htmlStr+=htmlString;
+            var htmlString="<li>【"+successData[i].txlb+"】 "+successData[i].ah+"<div style=\"display:none;width:100%;height:55px;float:left;font-size:13px;color:#607D8B\">*申请日期："+successData[i].sqrq+"</div></li>";
+            htmlStr+=htmlString;
            }
            document.getElementById("ajtx").innerHTML=htmlStr;
            $("#splabel").text("审批提醒 ["+successData.length+"]");
            $("#img1").attr("src","imgs/toDown.png");
            $ul.slideDown();
-           }
+          }
            var obj=document.getElementById("ajtx").getElementsByTagName("li");
            for(var i=0;i<obj.length;i++){
                obj[i].onmouseover=function(event){
@@ -95,6 +141,11 @@ function getLctx(){
      });
   }
 function getSxtx(){
+    $("#sxt").parent("li").show(); 
+    $("#dch").parent("li").hide(); 
+    $("#kxt").parent("li").hide(); 
+    $("#BWLtx").parent("li").hide();
+    $("#swtxzz").parent("li").hide();
    var yhdm = $("#yhdm").val();
    var fydm = $("#fydm").val();
    $.ajax({
@@ -106,13 +157,11 @@ function getSxtx(){
       console.log("审限提醒查询错误！");
   },
    success: function (successData) {
-       //$("#ajtx").css("display","block");
-       console.info(successData);
        var $ul = $("#sxt").next('ul');
        if($ul.is(':visible')){
-           $("#sxlabel").text("审限提醒 ["+successData.length+"]");
-           $("#img2").attr("src","imgs/toUp.png");
-           $ul.slideUp();
+        //    $("#sxlabel").text("审限提醒 ["+successData.length+"]");
+        //    $("#img2").attr("src","imgs/toUp.png");
+        //    $ul.slideUp();
            }else{
                var htmlStr="";
            for(var i=0;i<successData.length;i++){
@@ -138,6 +187,11 @@ function getSxtx(){
      });
   }
 function getKxtx(){
+    $("#dch").parent("li").hide(); 
+    $("#sxt").parent("li").hide(); 
+    $("#kxt").parent("li").show(); 
+    $("#BWLtx").parent("li").hide();
+    $("#swtxzz").parent("li").hide();
    var yhdm = $("#yhdm").val();
    var fydm = $("#fydm").val();
    $.ajax({
@@ -150,12 +204,11 @@ function getKxtx(){
   },
    success: function (successData) {
        //$("#ajtx").css("display","block");
-       console.info(successData);
        var $ul = $("#kxt").next('ul');
        if($ul.is(':visible')){
-           $("#kxlabel").text("开庭提醒 ["+successData.length+"]");
-           $("#img3").attr("src","imgs/toUp.png");
-           $ul.slideUp();
+        //    $("#kxlabel").text("开庭提醒 ["+successData.length+"]");
+        //    $("#img3").attr("src","imgs/toUp.png");
+        //    $ul.slideUp();
            }else{
                var htmlStr="";
            for(var i=0;i<successData.length;i++){
@@ -182,6 +235,11 @@ function getKxtx(){
   }
  //得到事务的自增提醒 
 function getSwZZ(){
+    $("#dch").parent("li").hide(); 
+    $("#sxt").parent("li").hide(); 
+    $("#kxt").parent("li").hide(); 
+    $("#BWLtx").parent("li").hide();
+    $("#swtxzz").parent("li").show();
     var yhdm = $("#yhdm").val();
     var fydm = $("#fydm").val();
     $.ajax({
@@ -194,12 +252,11 @@ function getSwZZ(){
     },
     success: function (successData) {
         //$("#ajtx").css("display","block");
-        console.info(successData);
         var $ul = $("#swtxzz").next('ul');
         if($ul.is(':visible')){
-            $("#swzzlabel").text("事务提醒 ["+successData.length+"]");
-            $("#img6").attr("src","imgs/toUp.png");
-            $ul.slideUp();
+            // $("#swzzlabel").text("事务提醒 ["+successData.length+"]");
+            // $("#img6").attr("src","imgs/toUp.png");
+            // $ul.slideUp();
             }else{
                 var htmlStr="";
             for(var i=0;i<successData.length;i++){
@@ -227,8 +284,12 @@ function getSwZZ(){
       });
  }
 
-
 function getBWL(){
+    $("#dch").parent("li").hide(); 
+    $("#sxt").parent("li").hide(); 
+    $("#kxt").parent("li").hide(); 
+    $("#BWLtx").parent("li").show();
+    $("#swtxzz").parent("li").hide();
     var yhdm = $("#yhdm").val();
     var fydm = $("#fydm").val();
     $.ajax({
@@ -241,12 +302,11 @@ function getBWL(){
     },
     success: function (successData) {
         //$("#ajtx").css("display","block");
-        console.info(successData);
         var $ul = $("#BWLtx").next('ul');
         if($ul.is(':visible')){
-            $("#Bwllabel").text("备忘录提醒 ["+successData.length+"]");
-            $("#img7").attr("src","imgs/toUp.png");
-            $ul.slideUp();
+            // $("#Bwllabel").text("备忘录提醒 ["+successData.length+"]");
+            // $("#img7").attr("src","imgs/toUp.png");
+            // $ul.slideUp();
             }else{
                 var htmlStr="";
             for(var i=0;i<successData.length;i++){
@@ -272,6 +332,71 @@ function getBWL(){
          }
       });
 }
+
+function getSxtxClick(){
+    $("#dch").parent("li").hide(); 
+    $("#sxt").parent("li").show(); 
+    $("#kxt").parent("li").hide(); 
+    $("#BWLtx").parent("li").hide();
+    $("#swtxzz").parent("li").hide();
+    var $ul = $("#sxt").next('ul');
+    if($ul.is(':visible')){
+    }else{
+         $("#sxtx").empty();
+         var htmlStr="";
+         for(var i=0;i<sxtxvalue.length;i++){
+             var ss="fff"+sxtxvalue[i];
+             var htmlString="<li style=\"margin-left:-20px;\"><a href=\"javascript:void(0)\" onclick=\"getSxtxClickQf("+sxtxvalue[i]+")\" id=\""+ss+"\"><img src=\"imgs/toUp.png\" style=\"width:auto;height:auto;\" id=\"imsg"+ss+"\"><label style=\"font-size:16px;\" id=\"label"+ss+"\">"+ysxtxvalue[i]+"</label></a><ul></ul></li>";
+             htmlStr+=htmlString;
+         }
+         document.getElementById("sxtx").innerHTML=htmlStr;
+         $ul.slideDown();
+    }
+}
+
+
+function getSxtxClickQf(gh){
+    var newurl=localUrl+urls[gh];
+    var yhdm = $("#yhdm").val();
+    var fydm = $("#fydm").val();
+    var ss="fff"+gh;
+    var sds="#"+ss;
+    var $ul = $(sds).next('ul');
+    var imgs="#imsg"+ss;
+    var label="#label"+ss;
+    if($(label).text()!=ysxtxvalue[gh]){
+        if($ul.is(':visible')){
+            $(imgs).attr("src","imgs/toUp.png");
+            $ul.slideUp();
+        }else{
+            $(imgs).attr("src","imgs/toDown.png");
+            $ul.slideDown();
+        }
+    }else{
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url:encodeURI(newurl),
+            data: { fydm: fydm, yhdm: yhdm},
+            error: function () {
+               console.log("审限提醒查询错误！");
+           },
+            success: function (successData) {
+                    var htmlStr="";
+                    for(var i=0;i<successData.length;i++){
+                        var htmlString="<li>【案号】"+successData[i].anhao+"，审限到期日期："+successData[i].sxdqrq+"</li>";
+                        htmlStr+=htmlString;
+                    }
+                    $ul.html(htmlStr);
+                    $(label).text(ysxtxvalue[gh]+"["+successData.length+"]");
+                    $(imgs).attr("src","imgs/toDown.png");
+                    $ul.slideDown();
+                 }
+              });
+    }
+
+}
+
 
 
 //计算会议时长
@@ -318,66 +443,77 @@ $(".sys-control-box .sys-btn-big").click(function () {
        "password": password
      };
      ipc.send('new-record',userdata);
- })
+ });
+ $(".teamCommunity").click(function(){
+    var yhdm=$("#yhdm").val();
+    var password=$("#password").val();
+    var fydm= $("#fydm").val();
+      var userdata={
+        "fydm": fydm, 
+        "yhdm": yhdm, 
+        "password": password
+      };
+      ipc.send('teamwork',userdata);
+  });
+
 
 //点击关闭按钮
 $(".sys-control-box .sys-btn-closed").click(function () {
     ipc.send('close-user-editor-window');
 });
 //案件
-$("#ajblock").click(function(){
-    $("#anjian").attr("src","imgs/banjiann.png");
-    $("#mainContent1").css("display","block");
-    $("#mainContent2").css("display","none");
-    $("#mainContent3").css("display","none");
-    $("#ajblock").css("background-color","white");
-    $("#ajblock").css("color","#1e74c2");
-    $("#swblock").css("color","black");
-    $("#sxblock").css("color","black");
-    $("#swblock").css("background-color","rgba(120, 132, 147, 0.14)");
-    $("#sxblock").css("background-color","rgba(120, 132, 147, 0.14)");
-    $("#shiwu").attr("src","imgs/shiwun.png");
-    $("#shenpi").attr("src","imgs/shenpin.png");
-});
-//事务
-$("#swblock").click(function(){
-    $("#shiwu").attr("src","imgs/bshiwun.png");
-    $("#mainContent1").css("display","none");
-    $("#mainContent2").css("display","block");
-    $("#mainContent3").css("display","none");
-    $("#anjian").attr("src","imgs/anjiann.png");
-    $("#shenpi").attr("src","imgs/shenpin.png");
-    $("#swblock").css("background-color","white");
-    $("#swblock").css("color","#1e74c2");
-    $("#sxblock").css("color","black");
-    $("#ajblock").css("color","black");
-    $("#sxblock").css("background-color","rgba(120, 132, 147, 0.14)");
-    $("#ajblock").css("background-color","rgba(120, 132, 147, 0.14)");
-    getSwZZ();
-    getBWL();
-});
-//审核
-$("#sxblock").click(function(){
-    $("#anjian").attr("src","imgs/anjiann.png");
-    $("#shiwu").attr("src","imgs/shiwun.png");
-    $("#shenpi").attr("src","imgs/bshenpin.png");
-    $("#mainContent1").css("display","none");
-    $("#mainContent2").css("display","none");
-    $("#mainContent3").css("display","block");
-    $("#sxblock").css("background-color","white");
-    $("#sxblock").css("color","#1e74c2");
-    $("#ajblock").css("color","black");
-    $("#swblock").css("color","black");
-    $("#ajblock").css("background-color","rgba(120, 132, 147, 0.14)");
-    $("#swblock").css("background-color","rgba(120, 132, 147, 0.14)");
-});
+// $("#ajblock").click(function(){
+//     $("#anjian").attr("src","imgs/banjiann.png");
+//     $("#mainContent1").css("display","block");
+//     $("#mainContent2").css("display","none");
+//     $("#mainContent3").css("display","none");
+//     $("#ajblock").css("background-color","white");
+//     $("#ajblock").css("color","#1e74c2");
+//     $("#swblock").css("color","black");
+//     $("#sxblock").css("color","black");
+//     $("#swblock").css("background-color","rgba(120, 132, 147, 0.14)");
+//     $("#sxblock").css("background-color","rgba(120, 132, 147, 0.14)");
+//     $("#shiwu").attr("src","imgs/shiwun.png");
+//     $("#shenpi").attr("src","imgs/shenpin.png");
+// });
+// //事务
+// $("#swblock").click(function(){
+//     $("#shiwu").attr("src","imgs/bshiwun.png");
+//     $("#mainContent1").css("display","none");
+//     $("#mainContent2").css("display","block");
+//     $("#mainContent3").css("display","none");
+//     $("#anjian").attr("src","imgs/anjiann.png");
+//     $("#shenpi").attr("src","imgs/shenpin.png");
+//     $("#swblock").css("background-color","white");
+//     $("#swblock").css("color","#1e74c2");
+//     $("#sxblock").css("color","black");
+//     $("#ajblock").css("color","black");
+//     $("#sxblock").css("background-color","rgba(120, 132, 147, 0.14)");
+//     $("#ajblock").css("background-color","rgba(120, 132, 147, 0.14)");
+//     getSwZZ();
+//     getBWL();
+// });
+// //审核
+// $("#sxblock").click(function(){
+//     $("#anjian").attr("src","imgs/anjiann.png");
+//     $("#shiwu").attr("src","imgs/shiwun.png");
+//     $("#shenpi").attr("src","imgs/bshenpin.png");
+//     $("#mainContent1").css("display","none");
+//     $("#mainContent2").css("display","none");
+//     $("#mainContent3").css("display","block");
+//     $("#sxblock").css("background-color","white");
+//     $("#sxblock").css("color","#1e74c2");
+//     $("#ajblock").css("color","black");
+//     $("#swblock").css("color","black");
+//     $("#ajblock").css("background-color","rgba(120, 132, 147, 0.14)");
+//     $("#swblock").css("background-color","rgba(120, 132, 147, 0.14)");
+// });
 
 
 
 
 //接受登陆成功的用户信息，并赋值
 ipc.on('loginUserData', function (event, message) {
-    console.log(message);
     // let user = JSON.parse(message);
     let user = message;
     console.log(user);
@@ -393,41 +529,80 @@ ipc.on('loginUserData', function (event, message) {
     // setCookie('yhdm',user.yhdm);
 });
 
-$(".saveForm .saveButton").click(function () {
-    $(".errorInformation").hide();
-    var newPassword = $(".newPassword input").val();
-    var isPassword = $(".isPassword input").val();
-    if (newPassword == isPassword) {
-        var userId = $("#userid input").val();
-        var userlId = $("#userlid input").val();
-        var username = $(".username input").val();
-        var department = $(".department input").val();
-        var project = $(".project input").val();
-        var telephone = $(".telephone input").val();
-        var email = $(".email input").val();
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: "http://localhost:8080/DemoWeb/user/updatea.do",
-            data: { userId: userId, username: username, department: department, project: project, telephone: telephone, email: email, password: newPassword, lid: userlId },
-            error: function () {
-                //alert("服务器错误，请稍后重试！");
-                updateUserMessage(userlId, username, department, project, telephone, email, newPassword);
-            },
-            success: function (forward) {
-                if (forward.success) {
-                    console.info(forward.data);
-                    alert("修改成功");
-                }
-                else {
-                    alert(forward.data);
-                }
-            }
-        });
+ipc.on('open-cx-1',(event, arg)=>{
+    var $ul = $("#dch").next('ul');
+    $("#img1").attr("src","imgs/toDown.png");
+    $ul.slideDown();
+    var $ull =$("#kxt").next('ul');;
+    if($ull.is(":visible")){
+        $("#img3").attr("src","imgs/toUp.png");
+        $ull.slideUp();
+    }
+    var $ull1 =$("#sxt").next('ul');;
+    if($ull1.is(":visible")){
+        $("#img2").attr("src","imgs/toUp.png");
+        $ull1.slideUp();
+    }
+});
 
-    } else {
-        $(".errorInformation").show();
-        $(".errorInformation").text("密码不一致，无法提交！");
+ipc.on('open-cx-2',(event, arg)=>{
+    var $ul = $("#sxt").next('ul');
+    $("#img2").attr("src","imgs/toDown.png");
+    $ul.slideDown();
+    var $ull1 = $("#dch").next('ul');
+    if($ull1.is(":visible")){
+        $("#img1").attr("src","imgs/toUp.png");
+        $ull1.slideUp();
+    }
+    var $ull =$("#kxt").next('ul');;
+    if($ull.is(":visible")){
+        $("#img3").attr("src","imgs/toUp.png");
+        $ull.slideUp();
+    }
+});
+
+ipc.on('open-cx-3',(event, arg)=>{
+    var $ul = $("#kxt").next('ul');
+    $("#img3").attr("src","imgs/toDown.png");
+    $ul.slideDown();
+    var $ull = $("#sxt").next('ul');
+    if($ull.is(":visible")){
+        $("#img2").attr("src","imgs/toUp.png");
+        $ull.slideUp();
+    }
+    var $ull1 = $("#dch").next('ul');
+    if($ull1.is(":visible")){
+        $("#img1").attr("src","imgs/toUp.png");
+        $ull1.slideUp();
+    }
+});
+
+ipc.on('open-cx-4',(event, arg)=>{
+    getSwZZ();
+    var $ul = $("#swtxzz").next('ul');
+    if($ul.is(':visible')){
+    }else{
+        $("#img6").attr("src","imgs/toDown.png");
+        $ul.slideDown();
+    }
+    var $ull = $("#BWLtx").next('ul');
+    if($ull.is(':visible')){
+        $("#img7").attr("src","imgs/toUp.png");
+        $ull.slideUp();
+    }
+});
+ipc.on('open-cx-5',(event, arg)=>{
+    getBWL();
+    var $ul = $("#BWLtx").next('ul');
+    if($ul.is(':visible')){
+    }else{
+        $("#img7").attr("src","imgs/toDown.png");
+    $ul.slideDown();
+    }
+    var $ull = $("#swtxzz").next('ul');
+    if($ull.is(':visible')){
+        $("#img6").attr("src","imgs/toUp.png");
+        $ull.slideUp();
     }
 });
 //实时获取时间
@@ -460,9 +635,8 @@ function getRealTime() {
     // var fromatDay=year+":"+month+":"+day+" "+hour+":"+minute+":"+second+"    "+week;
     // $("#RealTime").text(fromatDay);
     var sdate=hour+":"+minute+":"+second;
-    var timef=getTxs+":00";
-    if(sdate==timef){
-       console.log("timef:"+timef);
+    if(sdate==getTxs){
+       console.log("getTxs:"+getTxs);
        ipc.send('tx-clock',userData);
     }
     if(sdate=="14:10:00"){
@@ -470,8 +644,6 @@ function getRealTime() {
     }
     setTimeout('getRealTime()',1000);
 }
-
-
 
 //设置定时任务
 function getRealTimeTask() {
@@ -510,18 +682,13 @@ function getRealTimeTask() {
             "yhdm":$("#yhdm").val(),
         }
         getGXSZ();
-        getLctx();
-        getSxtx();
-        getKxtx();
-        getBWL();
-        console.log(userData);
+        // getLctx();
+        // getSxtx();
+        // getKxtx();
         getRealTime();
     }
 }
 
-$("nav .content>li").click(function(){
-    alert($(".content>li:hover").find('label').html())
-});
 // 设置定时获取一次提醒
 function getDataTX(){
 
@@ -549,43 +716,4 @@ function getSmallUrl() {
     return newUrl;
 }
 
-
-function updateUserMessage(userlId, username, department, project, telephone, email, newPassword) {
-    if (newPassword == "") {
-        var params = {
-            "name": username,
-            "department": department,
-            "project": project,
-            "telephone": telephone,
-            "email": email,
-        }
-    } else {
-        var params = {
-            "name": username,
-            "department": department,
-            "project": project,
-            "telephone": telephone,
-            "email": email,
-            "password": newPassword
-        }
-    }
-    let result = JSON.parse(fs.readFileSync(newFile_path));
-    for (var i in result) {
-        if (userlId == result[i].lid) {
-            for (var key in params) {
-                if (result[i][key]) {
-                    result[i][key] = params[key];
-                }
-            }
-        }
-    }
-    //格式化输出
-    let newData = JSON.stringify(result,null,4);
-    fs.writeFile(newFile_path, newData, (error) => {
-        if (error) {
-            console.error(error);
-        }
-        alert("保存成功");
-    });
-}
 
