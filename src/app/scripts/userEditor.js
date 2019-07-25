@@ -66,7 +66,7 @@ $.ajax({
                    }
                }
             }else{
-            sxtxvalue[0]=1;
+            sxtxvalue[0]=0;
             ysxtxvalue[0]="超审限";
             sxtxvalue[1]=1;
             ysxtxvalue[1]="0天审限";
@@ -79,6 +79,16 @@ $.ajax({
             }
         }
         else {
+            sxtxvalue[0]=0;
+            ysxtxvalue[0]="超审限";
+            sxtxvalue[1]=1;
+            ysxtxvalue[1]="0天审限";
+            sxtxvalue[2]=2;
+            ysxtxvalue[2]="3天审限";
+            sxtxvalue[3]=3;
+            ysxtxvalue[3]="7天审限";
+            sxtxvalue[4]=4;
+            ysxtxvalue[4]="扣除恢复";
         }
      },
      error : function(jqXHR, textStatus, errorThrown) {
